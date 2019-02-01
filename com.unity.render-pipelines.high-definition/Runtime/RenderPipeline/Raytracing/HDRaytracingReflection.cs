@@ -224,12 +224,20 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 {
                     case HDRaytracingEnvironment.ReflectionsQuality.Nvidia:
                     {
-                        cmd.NVFilterReflectionTexture(m_LightingTexture, m_HitDistanceBuffer, m_InvertedDepthTexture, m_VertNormalBuffer, outputTexture,
+                        cmd.NVFilterReflectionTexture(m_LightingTexture, m_HitDistanceBuffer, m_InvertedDepthTexture, m_VertNormalBuffer, m_SharedRTManager.GetNormalBuffer(), outputTexture,
                                                     hdCamera.viewMatrix, hdCamera.projMatrix,
                                                     rtEnvironement.lowerRoughnessTransitionPoint, rtEnvironement.upperRoughnessTransitionPoint,
                                                     rtEnvironement.minSamplingBias, rtEnvironement.maxSamplingBias,
                                                     rtEnvironement.useLogSpace, rtEnvironement.logSpaceParam,
                                                     (uint)rtEnvironement.normalWeightMode);
+
+                        ComputeShader postPassCS = m_PipelineAsset.renderPipelineResources.shaders.nvReflectionsPostPassCS;
+                        int mainKernel = postPassCS.FindKernel("CSMain");
+                        cmd.SetComputeTextureParam(postPassCS, mainKernel, "_Result", outputTexture);
+                        cmd.SetComputeFloatParam(postPassCS, "_RaytracingRayMaxLength", rtEnvironement.aoRayLength);
+                        uint thdX, thdY, thdZ;
+                        postPassCS.GetKernelThreadGroupSizes(mainKernel, out thdX, out thdY, out thdZ);
+                        cmd.DispatchCompute(postPassCS, mainKernel, hdCamera.actualWidth / (int)thdX, hdCamera.actualHeight / (int)thdY, 1);
                     }
                     break;
                     case HDRaytracingEnvironment.ReflectionsQuality.QuarterRes:

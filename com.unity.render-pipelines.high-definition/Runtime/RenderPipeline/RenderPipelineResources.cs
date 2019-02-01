@@ -136,6 +136,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             public ComputeShader reflectionBilateralFilterCS;
             public ComputeShader lightClusterBuildCS;
             public ComputeShader lightClusterDebugCS;
+            public ComputeShader nvReflectionsPostPassCS;
 #endif
         }
 
@@ -314,9 +315,10 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 jointBilateralFilterCS = Load<ComputeShader>(HDRenderPipelinePath + "RenderPipeline/Raytracing/Shaders/JointBilateralFilter.compute"),
                 reflectionBilateralFilterCS = Load<ComputeShader>(HDRenderPipelinePath + "RenderPipeline/Raytracing/Shaders/RaytracingReflectionFilter.compute"),
                 lightClusterBuildCS = Load<ComputeShader>(HDRenderPipelinePath + "RenderPipeline/Raytracing/Shaders/RaytracingLightCluster.compute"),
-                lightClusterDebugCS = Load<ComputeShader>(HDRenderPipelinePath + "RenderPipeline/Raytracing/Shaders/DebugLightCluster.compute")
+                lightClusterDebugCS = Load<ComputeShader>(HDRenderPipelinePath + "RenderPipeline/Raytracing/Shaders/DebugLightCluster.compute"),
+                nvReflectionsPostPassCS = Load<ComputeShader>(HDRenderPipelinePath + "RenderPipeline/Raytracing/Shaders/NVFilterPostPass.compute")
 #endif
-        };
+            };
 
             // Materials
             materials = new MaterialResources

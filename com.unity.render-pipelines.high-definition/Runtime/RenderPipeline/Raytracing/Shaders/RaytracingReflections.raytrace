@@ -61,7 +61,7 @@ void RayGenNVFilter()
 
     // Clear the textures 
     _SsrLightingTextureRW[currentCoord] = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    _SsrHitPointTexture[currentCoord] = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    _VertNormalBuffer[currentCoord] = float4(0.0f, 0.0f, 0.0f, 1.0f);
     _RaytracingHitDistanceTexture[currentCoord] = 0.0f; 
 
     // This point is part of the background, we don't really care 
@@ -88,7 +88,7 @@ void RayGenNVFilter()
     
     // Store smooth normals and nonlinear roughness for filtering
     _VertNormalBuffer[currentCoord].xyz = normalData.normalWS;
-    _VertNormalBuffer[currentCoord].w = normalData.perceptualRoughness; 
+    _VertNormalBuffer[currentCoord].w = 1.0; 
     
     // Create the ray descriptor for this pixel
     RayDesc rayDescriptor;
