@@ -403,7 +403,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         // shadow related stuff
         HDShadowManager                     m_ShadowManager;
-        HDShadowInitParameters              m_ShadowInitParameters;
+        GlobalLightLoopSettings             m_LightingSettings;
 
 #if ENABLE_RAYTRACING
         HDRaytracingManager                 m_RayTracingManager;
@@ -434,13 +434,13 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         void InitShadowSystem(HDRenderPipelineAsset hdAsset)
         {
-            m_ShadowInitParameters = hdAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams;
+            m_LightingSettings = hdAsset.currentPlatformRenderPipelineSettings.lightLoopSettings;
             m_ShadowManager = new HDShadowManager(
                 hdAsset.renderPipelineResources,
-                m_ShadowInitParameters.shadowAtlasResolution,
-                m_ShadowInitParameters.shadowAtlasResolution,
-                m_ShadowInitParameters.maxShadowRequests,
-                m_ShadowInitParameters.shadowMapsDepthBits,
+                m_LightingSettings.shadowAtlasResolution,
+                m_LightingSettings.shadowAtlasResolution,
+                m_LightingSettings.maxShadowRequests,
+                m_LightingSettings.shadowMapsDepthBits,
                 hdAsset.renderPipelineResources.shaders.shadowClearPS
             );
         }
@@ -653,7 +653,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             m_DefaultTextureCube.Apply();
 
             // Setup shadow algorithms
-            var shadowParams = hdAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams;
+            var shadowParams = hdAsset.currentPlatformRenderPipelineSettings.lightLoopSettings;
             var shadowKeywords = new[]{"SHADOW_LOW", "SHADOW_MEDIUM", "SHADOW_HIGH", "SHADOW_VERY_HIGH"};
             foreach (var p in shadowKeywords)
                 Shader.DisableKeyword(p);
@@ -1786,7 +1786,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                         var additionalData = GetHDAdditionalLightData(lightComponent);
 
                         // Reserve shadow map resolutions and check if light needs to render shadows
-                        additionalData.ReserveShadows(camera, m_ShadowManager, m_ShadowInitParameters, cullResults, m_FrameSettings, lightIndex);
+                        additionalData.ReserveShadows(camera, m_ShadowManager, m_LightingSettings, cullResults, m_FrameSettings, lightIndex);
 
                         LightCategory lightCategory = LightCategory.Count;
                         GPULightType gpuLightType = GPULightType.Point;

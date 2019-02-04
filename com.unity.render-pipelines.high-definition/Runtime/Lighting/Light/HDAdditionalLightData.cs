@@ -246,7 +246,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return (m_Light.type == LightType.Point) ? 6 : (m_Light.type == LightType.Directional) ? m_ShadowSettings.cascadeShadowSplitCount : 1;
         }
 
-        public void ReserveShadows(Camera camera, HDShadowManager shadowManager, HDShadowInitParameters initParameters, CullingResults cullResults, FrameSettings frameSettings, int lightIndex)
+        public void ReserveShadows(Camera camera, HDShadowManager shadowManager, GlobalLightLoopSettings initParameters, CullingResults cullResults, FrameSettings frameSettings, int lightIndex)
         {
             Bounds bounds;
             float cameraDistance = Vector3.Distance(camera.transform.position, transform.position);
@@ -281,7 +281,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             Vector2 viewportSize = new Vector2(m_ShadowData.shadowResolution, m_ShadowData.shadowResolution);
 
             // Compute dynamic shadow resolution
-            if (initParameters.useDynamicViewportRescale && m_Light.type != LightType.Directional)
+            if (initParameters.dynamicViewportRescale && m_Light.type != LightType.Directional)
             {
                 // resize viewport size by the normalized size of the light on screen
                 // When we will have access to the non screen clamped bounding sphere light size, we could use it to scale the shadow map resolution

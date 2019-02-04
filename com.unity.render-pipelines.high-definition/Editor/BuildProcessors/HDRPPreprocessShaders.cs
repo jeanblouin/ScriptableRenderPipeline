@@ -15,7 +15,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public override bool ShadersStripper(HDRenderPipelineAsset hdrpAsset, Shader shader, ShaderSnippetData snippet, ShaderCompilerData inputData)
         {
             // Strip every useless shadow configs
-            var shadowInitParams = hdrpAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams;
+            var shadowInitParams = hdrpAsset.currentPlatformRenderPipelineSettings.lightLoopSettings;
 
             foreach (var shadowVariant in m_ShadowVariants)
             {

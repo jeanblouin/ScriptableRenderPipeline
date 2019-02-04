@@ -19,11 +19,11 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         {
             this.root = root;
 
-            shadowAtlasResolution = root.Find((HDShadowInitParameters s) => s.shadowAtlasResolution);
-            shadowMapDepthBits = root.Find((HDShadowInitParameters s) => s.shadowMapsDepthBits);
-            useDynamicViewportRescale = root.Find((HDShadowInitParameters s) => s.useDynamicViewportRescale);
-            maxShadowRequests = root.Find((HDShadowInitParameters s) => s.maxShadowRequests);
-            shadowQuality = root.Find((HDShadowInitParameters s) => s.shadowQuality);
+            shadowAtlasResolution = root.Find((GlobalLightLoopSettings s) => s.shadowAtlasResolution);
+            shadowMapDepthBits = root.Find((GlobalLightLoopSettings s) => s.shadowMapsDepthBits);
+            useDynamicViewportRescale = root.Find((GlobalLightLoopSettings s) => s.dynamicViewportRescale);
+            maxShadowRequests = root.Find((GlobalLightLoopSettings s) => s.maxShadowRequests);
+            shadowQuality = root.Find((GlobalLightLoopSettings s) => s.shadowQuality);
         }
     }
 }

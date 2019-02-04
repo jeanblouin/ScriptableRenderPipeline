@@ -47,10 +47,10 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                         (serialized, owner) => serialized.lightLoopSettings,
                         GlobalLightLoopSettingsUI.Inspector
                         ),
-                    CED.Select(
-                        (serialized, owner) => serialized.hdShadowInitParams,
-                        HDShadowInitParametersUI.Inspector
-                        ),
+                    //CED.Select(
+                    //    (serialized, owner) => serialized.lightLoopSettings,
+                    //    HDShadowInitParametersUI.Inspector
+                    //    ),
                     CED.Select(
                         (serialized, owner) => serialized.decalSettings,
                         GlobalDecalSettingsUI.Inspector
@@ -103,7 +103,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
             // MSAA is an option that is only available in full forward but Camera can be set in Full Forward only. Thus MSAA have no dependency currently
             //Note: do not use SerializedProperty.enumValueIndex here as this enum not start at 0 as it is used as flags.
-            bool msaaAllowed = d.supportedLitShaderMode.intValue == (int)UnityEngine.Experimental.Rendering.HDPipeline.RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly || d.supportedLitShaderMode.intValue == (int)UnityEngine.Experimental.Rendering.HDPipeline.RenderPipelineSettings.SupportedLitShaderMode.Both;
+            bool msaaAllowed = d.supportedLitShaderMode.intValue == (int)RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly || d.supportedLitShaderMode.intValue == (int)RenderPipelineSettings.SupportedLitShaderMode.Both;
             using (new EditorGUI.DisabledScope(!msaaAllowed))
             {
                 ++EditorGUI.indentLevel;

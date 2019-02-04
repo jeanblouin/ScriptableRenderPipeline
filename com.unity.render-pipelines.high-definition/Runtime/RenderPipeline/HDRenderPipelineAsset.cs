@@ -105,7 +105,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         // Store the various RenderPipelineSettings for each platform (for now only one)
         [SerializeField]
-        RenderPipelineSettings m_RenderPipelineSettings = new RenderPipelineSettings();
+        RenderPipelineSettings m_RenderPipelineSettings = RenderPipelineSettings.@default;
 
         // Return the current use RenderPipelineSettings (i.e for the current platform)
         public RenderPipelineSettings currentPlatformRenderPipelineSettings => m_RenderPipelineSettings;

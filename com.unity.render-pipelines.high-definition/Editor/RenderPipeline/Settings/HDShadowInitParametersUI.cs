@@ -26,7 +26,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             ShadowSettings = 1 << 0
         }
 
-        readonly static ExpandedState<Expandable, HDShadowInitParameters> k_ExpandedState = new ExpandedState<Expandable, HDShadowInitParameters>(Expandable.ShadowSettings, "HDRP");
+        readonly static ExpandedState<Expandable, GlobalLightLoopSettings> k_ExpandedState = new ExpandedState<Expandable, GlobalLightLoopSettings>(Expandable.ShadowSettings, "HDRP");
 
         static readonly GUIContent k_HeaderContent = EditorGUIUtility.TrTextContent("Shadows");
 

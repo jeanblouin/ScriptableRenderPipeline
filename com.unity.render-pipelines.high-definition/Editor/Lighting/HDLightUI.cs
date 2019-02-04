@@ -685,8 +685,8 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                 return false;
 
             // Draw shadow settings using the current shadow algorithm
-            HDShadowInitParameters hdShadowInitParameters = (GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset).currentPlatformRenderPipelineSettings.hdShadowInitParams;
-            return hdShadowInitParameters.shadowQuality == quality;
+            GlobalLightLoopSettings lightLoopSettings = (GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset).currentPlatformRenderPipelineSettings.lightLoopSettings;
+            return lightLoopSettings.shadowQuality == quality;
         }
 
         static void ApplyEditorLightShape(SerializedHDLight serialized, Editor owner)
