@@ -182,7 +182,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public static DirectionalShadowAlgorithm GetDirectionaShadowAlgorithm()
         {
             var hdAsset = (GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset);
-            switch (hdAsset.renderPipelineSettings.hdShadowInitParams.shadowQuality)
+            switch (hdAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams.shadowQuality)
             {
                 case HDShadowQuality.Low:
                 {
@@ -311,7 +311,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
 
             var hdAsset = (GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset);
-            if (hdAsset.renderPipelineSettings.hdShadowInitParams.shadowQuality == HDShadowQuality.VeryHigh && shadowRequest.lightType == (int)LightType.Directional)
+            if (hdAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams.shadowQuality == HDShadowQuality.VeryHigh && shadowRequest.lightType == (int)LightType.Directional)
             {
                 data.shadowFilterParams0.x = shadowRequest.kernelSize;
                 data.shadowFilterParams0.y = shadowRequest.lightAngle;
