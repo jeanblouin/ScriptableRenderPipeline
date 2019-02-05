@@ -45,7 +45,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             supportRuntimeDebugDisplay = true,
             supportDitheringCrossFade = true,
             editorRaytracingFilterLayerMask = -1,
-            lightLoopSettings = GlobalLightLoopSettings.@default,
+            lightLoopSettings = GlobalLightingSettings.@default,
             decalSettings = GlobalDecalSettings.@default,
             postProcessSettings = GlobalPostProcessSettings.@default,
             dynamicResolutionSettings = GlobalDynamicResolutionSettings.@default,
@@ -85,7 +85,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         public bool supportRayTracing;
         public LayerMask editorRaytracingFilterLayerMask;
 
-        public GlobalLightLoopSettings  lightLoopSettings;
+        public GlobalLightingSettings  lightLoopSettings;
         public GlobalDecalSettings      decalSettings;
         public GlobalPostProcessSettings postProcessSettings;
         public GlobalDynamicResolutionSettings dynamicResolutionSettings;

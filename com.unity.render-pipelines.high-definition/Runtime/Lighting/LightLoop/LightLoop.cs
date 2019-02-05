@@ -403,7 +403,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         // shadow related stuff
         HDShadowManager                     m_ShadowManager;
-        GlobalLightLoopSettings             m_LightingSettings;
+        GlobalLightingSettings             m_LightingSettings;
 
 #if ENABLE_RAYTRACING
         HDRaytracingManager                 m_RayTracingManager;
@@ -506,7 +506,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 m_Env2DCaptureVP.Add(Matrix4x4.identity);
 
 
-            GlobalLightLoopSettings gLightLoopSettings = hdAsset.currentPlatformRenderPipelineSettings.lightLoopSettings;
+            GlobalLightingSettings gLightLoopSettings = hdAsset.currentPlatformRenderPipelineSettings.lightLoopSettings;
             m_CookieTexArray = new TextureCache2D("Cookie");
             int coockieSize = gLightLoopSettings.cookieTexArraySize;
             int coockieResolution = (int)gLightLoopSettings.cookieSize;

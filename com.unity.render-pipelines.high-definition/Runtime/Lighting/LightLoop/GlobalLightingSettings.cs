@@ -60,10 +60,10 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
     }
 
     [Serializable]
-    public struct GlobalLightLoopSettings
+    public struct GlobalLightingSettings
     {
         /// <summary>Default GlobalDecalSettings</summary>
-        public static readonly GlobalLightLoopSettings @default = new GlobalLightLoopSettings()
+        public static readonly GlobalLightingSettings @default = new GlobalLightingSettings()
         {
             cookieSize = CookieResolution.CookieResolution128,
             cookieTexArraySize = 16,

@@ -246,7 +246,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             return (m_Light.type == LightType.Point) ? 6 : (m_Light.type == LightType.Directional) ? m_ShadowSettings.cascadeShadowSplitCount : 1;
         }
 
-        public void ReserveShadows(Camera camera, HDShadowManager shadowManager, GlobalLightLoopSettings initParameters, CullingResults cullResults, FrameSettings frameSettings, int lightIndex)
+        public void ReserveShadows(Camera camera, HDShadowManager shadowManager, GlobalLightingSettings initParameters, CullingResults cullResults, FrameSettings frameSettings, int lightIndex)
         {
             Bounds bounds;
             float cameraDistance = Vector3.Distance(camera.transform.position, transform.position);
