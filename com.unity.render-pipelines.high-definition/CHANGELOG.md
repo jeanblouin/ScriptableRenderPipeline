@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added support for textured rectangular area lights
 - Added stereo instancing macros to MSAA shaders
 - Added multi edition support for HDRenderPipelineAsset
+- Added support for Quarter Res Raytraced Reflections (not enabled)
 
 ### Fixed
 - Fixed logic to disable FPTL with stereo rendering
@@ -107,6 +108,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed Decals when rendering multiple camera in a single frame
 - Fixed cascade shadow count in shader
 - Fixed multi edition issue in FrameSettings
+- Fixed issue with Stacklit shader with Haze effect
+- Fixed an issue with the max sample count for the TAA
 
 ### Changed
 - ColorPyramid compute shader passes is swapped to pixel shader passes on platforms where the later is faster (Nintendo Switch).
@@ -133,6 +136,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Parameter depthSlice on SetRenderTarget functions now defaults to -1 to bind the entire resource
 - Rename SampleCameraDepth() functions to LoadCameraDepth() and SampleCameraDepth(), same for SampleCameraColor() functions
 - Updated HDRenderPipelineAsset inspector
+- Improved Motion Blur quality. 
 
 ## [5.2.0-preview] - 2018-11-27
 
