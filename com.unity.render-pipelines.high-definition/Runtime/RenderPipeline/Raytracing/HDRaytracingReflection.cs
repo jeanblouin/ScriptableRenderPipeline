@@ -13,7 +13,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         HDRaytracingManager m_RaytracingManager = null;
         SharedRTManager m_SharedRTManager = null;
 
-        static readonly int _InvertedDepthTexture = Shader.PropertyToID("_InvertedDepthTexture");
         static readonly int _VertNormalBuffer = Shader.PropertyToID("_VertNormalBuffer");
 
         // Intermediate buffer that stores the reflection pre-denoising
@@ -25,7 +24,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
         // Additional textures for NVFilter
         RTHandleSystem.RTHandle m_HitDistanceBuffer = null;
-        RTHandleSystem.RTHandle m_InvertedDepthTexture = null;
         RTHandleSystem.RTHandle m_VertNormalBuffer = null;
 
         // Light cluster structure
@@ -59,7 +57,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // Buffer that holds the average distance of the rays
             // TODO share hit distance and normal buffers with AO?
             m_HitDistanceBuffer = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16_SFloat, enableRandomWrite: true, useMipMap: false, name: "HitDistanceBuffer");
-            m_InvertedDepthTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16_SFloat, enableRandomWrite: true, name: "InvertedDepthBuffer");
             m_VertNormalBuffer = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16G16B16A16_SFloat, enableRandomWrite: true, useMipMap: false, name: "VertexNormalBuffer");
 
             m_LightingTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16G16B16A16_SFloat, enableRandomWrite: true, useMipMap: false, name: "LightingBuffer");
@@ -86,7 +83,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             m_LightCluster = null;
 
             RTHandles.Release(m_HitDistanceBuffer);
-            RTHandles.Release(m_InvertedDepthTexture);
             RTHandles.Release(m_VertNormalBuffer);
             RTHandles.Release(m_MinBoundBuffer);
             RTHandles.Release(m_MaxBoundBuffer);
@@ -169,7 +165,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
 
             // Data required for nvidia filter
             cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, HDShaderIDs._RaytracingHitDistanceTexture, m_HitDistanceBuffer);
-            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, _InvertedDepthTexture, m_InvertedDepthTexture);
             cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, _VertNormalBuffer, m_VertNormalBuffer);
 
             // Compute the pixel spread value
@@ -224,8 +219,8 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 {
                     case HDRaytracingEnvironment.ReflectionsQuality.Nvidia:
                     {
-                        cmd.NVFilterReflectionTexture(m_LightingTexture, m_HitDistanceBuffer, m_InvertedDepthTexture, m_VertNormalBuffer, m_SharedRTManager.GetNormalBuffer(), outputTexture,
-                                                    hdCamera.viewMatrix, hdCamera.projMatrix,
+                        cmd.NVFilterReflectionTexture(m_LightingTexture, m_HitDistanceBuffer, m_SharedRTManager.GetDepthStencilBuffer(), m_VertNormalBuffer, m_SharedRTManager.GetNormalBuffer(), outputTexture,
+                                                    hdCamera.viewMatrix, hdCamera.projMatrix, hdCamera.viewProjMatrix, hdCamera.viewProjMatrix.inverse,
                                                     rtEnvironement.lowerRoughnessTransitionPoint, rtEnvironement.upperRoughnessTransitionPoint,
                                                     rtEnvironement.minSamplingBias, rtEnvironement.maxSamplingBias,
                                                     rtEnvironement.useLogSpace, rtEnvironement.logSpaceParam,

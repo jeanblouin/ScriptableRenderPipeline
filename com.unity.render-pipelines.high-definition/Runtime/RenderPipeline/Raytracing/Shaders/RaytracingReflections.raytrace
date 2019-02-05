@@ -34,7 +34,6 @@ RWTexture2D<float4>                     _SsrLightingTextureRW;
 RWTexture2D<float4>                     _SsrHitPointTexture;
 
 // Needed for NVReflectionFilter
-RWTexture2D<float>  _InvertedDepthTexture;
 RWTexture2D<float4> _VertNormalBuffer;
 RWTexture2D<float>  _RaytracingHitDistanceTexture;
 
@@ -57,7 +56,6 @@ void RayGenNVFilter()
     
     // Read the depth value
     float depthValue  = _DepthTexture[currentCoord];
-    _InvertedDepthTexture[currentCoord] = 1.0f - depthValue;
 
     // Clear the textures 
     _SsrLightingTextureRW[currentCoord] = float4(0.0f, 0.0f, 0.0f, 0.0f);
