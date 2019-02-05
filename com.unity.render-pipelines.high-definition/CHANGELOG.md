@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added support for "After Post-Process" render pass for unlit shader
 - Added support for textured rectangular area lights
 - Added stereo instancing macros to MSAA shaders
+- Added multi edition support for HDRenderPipelineAsset
 
 ### Fixed
 - Fixed logic to disable FPTL with stereo rendering
@@ -105,6 +106,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a case of ambient lighting flickering because of previews
 - Fixed Decals when rendering multiple camera in a single frame
 - Fixed cascade shadow count in shader
+- Fixed multi edition issue in FrameSettings
 
 ### Changed
 - ColorPyramid compute shader passes is swapped to pixel shader passes on platforms where the later is faster (Nintendo Switch).
@@ -130,6 +132,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Temporal Antialiasing optimization for Xbox One X
 - Parameter depthSlice on SetRenderTarget functions now defaults to -1 to bind the entire resource
 - Rename SampleCameraDepth() functions to LoadCameraDepth() and SampleCameraDepth(), same for SampleCameraColor() functions
+- Updated HDRenderPipelineAsset inspector
 
 ## [5.2.0-preview] - 2018-11-27
 
