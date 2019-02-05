@@ -1,8 +1,11 @@
+using System.Linq;
+using UnityEngine;
 using UnityEngine.Experimental.Rendering.HDPipeline;
 
 namespace UnityEditor.Experimental.Rendering.HDPipeline
 {
     [CustomEditor(typeof(HDRenderPipelineAsset))]
+    [CanEditMultipleObjects]
     public sealed class HDRenderPipelineEditor : Editor
     {
         SerializedHDRenderPipelineAsset m_SerializedHDRenderPipeline;
@@ -10,8 +13,6 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         void OnEnable()
         {
             m_SerializedHDRenderPipeline = new SerializedHDRenderPipelineAsset(serializedObject);
-
-            HDRenderPipelineUI.ApplyChangedDisplayedFrameSettings(m_SerializedHDRenderPipeline, this);
         }
 
         public override void OnInspectorGUI()
