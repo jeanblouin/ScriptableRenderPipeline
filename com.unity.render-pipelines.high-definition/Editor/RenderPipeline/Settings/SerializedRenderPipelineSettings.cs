@@ -34,7 +34,6 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public SerializedProperty editorRaytracingFilterLayerMask;
 
         public SerializedGlobalLightLoopSettings lightLoopSettings;
-        public SerializedHDShadowInitParameters hdShadowInitParams;
         public SerializedGlobalDecalSettings decalSettings;
         public SerializedGlobalPostProcessSettings postProcessSettings;
         public SerializedDynamicResolutionSettings dynamicResolutionSettings;

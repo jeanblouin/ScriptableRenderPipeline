@@ -11,7 +11,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         {
             m_SerializedHDRenderPipeline = new SerializedHDRenderPipelineAsset(serializedObject);
 
-            HDRenderPipelineUI.Init(m_SerializedHDRenderPipeline, this);
+            HDRenderPipelineUI.ApplyChangedDisplayedFrameSettings(m_SerializedHDRenderPipeline, this);
         }
 
         public override void OnInspectorGUI()

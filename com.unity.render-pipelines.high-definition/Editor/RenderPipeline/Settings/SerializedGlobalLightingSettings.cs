@@ -25,6 +25,12 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         public SerializedProperty maxAreaLightsOnScreen; 
         public SerializedProperty maxEnvLightsOnScreen;
         public SerializedProperty maxDecalsOnScreen;
+        
+        public SerializedProperty shadowAtlasResolution;
+        public SerializedProperty shadowMapDepthBits;
+        public SerializedProperty useDynamicViewportRescale;
+        public SerializedProperty maxShadowRequests;
+        public SerializedProperty shadowQuality;
 
         public SerializedGlobalLightLoopSettings(SerializedProperty root)
         {
@@ -52,6 +58,12 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             maxAreaLightsOnScreen = root.Find((GlobalLightLoopSettings s) => s.maxAreaLightsOnScreen);
             maxEnvLightsOnScreen = root.Find((GlobalLightLoopSettings s) => s.maxEnvLightsOnScreen);
             maxDecalsOnScreen = root.Find((GlobalLightLoopSettings s) => s.maxDecalsOnScreen);
+
+            shadowAtlasResolution = root.Find((GlobalLightLoopSettings s) => s.shadowAtlasResolution);
+            shadowMapDepthBits = root.Find((GlobalLightLoopSettings s) => s.shadowMapsDepthBits);
+            useDynamicViewportRescale = root.Find((GlobalLightLoopSettings s) => s.dynamicViewportRescale);
+            maxShadowRequests = root.Find((GlobalLightLoopSettings s) => s.maxShadowRequests);
+            shadowQuality = root.Find((GlobalLightLoopSettings s) => s.shadowQuality);
         }
     }
 }
