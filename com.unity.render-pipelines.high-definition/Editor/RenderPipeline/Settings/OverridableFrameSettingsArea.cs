@@ -190,10 +190,11 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
                                     break;
                                 case FrameSettingsFieldAttribute.DisplayType.BoolAsEnumPopup:
                                     //shame but it is not possible to use Convert.ChangeType to convert int into enum in current C#
+                                    //Also, Enum.Equals and Enum operator!= always send true here. Rely on GetHashCode to obtain index in enum.
                                     //rely on string parsing for the moment
                                     var oldEnumValue = Enum.Parse(attributes[field.field].targetType, serializedFrameSettings.IsEnabled(field.field) ? "1" : "0"); 
-                                    var newEnumValue = (Enum)DrawFieldShape(field.label, oldEnumValue);
-                                    if (oldEnumValue != newEnumValue)
+                                    var newEnumValue = DrawFieldShape(field.label, oldEnumValue).GetHashCode();
+                                    if (oldEnumValue.GetHashCode() != newEnumValue)
                                     {
                                         Undo.RecordObject(serializedFrameSettings.serializedObject.targetObject, "Changed FrameSettings " + field.field);
                                         serializedFrameSettings.SetEnabled(field.field, Convert.ToInt32(newEnumValue) == 1);
