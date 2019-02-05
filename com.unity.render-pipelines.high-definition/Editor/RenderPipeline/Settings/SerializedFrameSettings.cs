@@ -18,7 +18,17 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         }
 
         public bool IsEnabled(FrameSettingsField field) => rootData.GetBitArrayAt((uint)field);
-        public void SetEnabled(FrameSettingsField field, bool value) => rootData.SetBitArrayAt((uint)field, value);
+        public void SetEnabled(FrameSettingsField field, bool value)
+        {
+            if(rootData.serializedObject.isEditingMultipleObjects)
+            {
+                var objects = rootData.serializedObject.targetObjects;
+                for (int index = 0; index < objects.Length; ++index)
+                    GetData(objects[index]).SetEnabled(field, value);
+            }
+            else
+                rootData.SetBitArrayAt((uint)field, value);
+        }
         public bool HaveMultipleValue(FrameSettingsField field)
         {
             bool value = IsEnabled(field);
@@ -41,21 +51,21 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             return false;
         }
 
-        FrameSettings GetData(Object obj)
+        ref FrameSettings GetData(Object obj)
         {
             if (obj is HDAdditionalCameraData)
-                return (obj as HDAdditionalCameraData).renderingPathCustomFrameSettings;
+                return ref (obj as HDAdditionalCameraData).renderingPathCustomFrameSettings;
             if (obj is HDProbe)
-                return (obj as HDProbe).frameSettings;
+                return ref (obj as HDProbe).frameSettings;
             if (obj is HDRenderPipelineAsset)
                 switch (HDRenderPipelineUI.selectedFrameSettings)
                 {
                     case HDRenderPipelineUI.SelectedFrameSettings.Camera:
-                        return (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
+                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
                     case HDRenderPipelineUI.SelectedFrameSettings.BakedOrCustomReflection:
-                        return (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
+                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
                     case HDRenderPipelineUI.SelectedFrameSettings.RealtimeReflection:
-                        return (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
+                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
                     default:
                         throw new System.ArgumentException("Unknown kind of HDRenderPipelineUI.SelectedFrameSettings");
                 }
