@@ -9,7 +9,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         static readonly GUIContent k_LightingSectionTitle = EditorGUIUtility.TrTextContent("Lighting");
         static readonly GUIContent k_MaterialSectionTitle = EditorGUIUtility.TrTextContent("Material");
         static readonly GUIContent k_PostProcessSectionTitle = EditorGUIUtility.TrTextContent("Post-processing");
-        static readonly GUIContent k_LightLoopSectionTitle = EditorGUIUtility.TrTextContent("Light Loop");
+        static readonly GUIContent k_LightLoopSubTitle = EditorGUIUtility.TrTextContent("Light Loop");
 
         static readonly GUIContent k_CookiesSubTitle = EditorGUIUtility.TrTextContent("Cookies");
         static readonly GUIContent k_ReflectionsSubTitle = EditorGUIUtility.TrTextContent("Reflections");
