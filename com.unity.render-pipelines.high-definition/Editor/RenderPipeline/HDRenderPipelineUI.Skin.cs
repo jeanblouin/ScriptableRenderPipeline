@@ -17,7 +17,6 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         static readonly GUIContent k_DecalsSubTitle = EditorGUIUtility.TrTextContent("Decals");
         static readonly GUIContent k_ShadowSubTitle = EditorGUIUtility.TrTextContent("Shadow");
         static readonly GUIContent k_ShadowAtlasSubTitle = EditorGUIUtility.TrTextContent("Atlas");
-        static readonly GUIContent k_ShadowFilteringQualitySubTitle = EditorGUIUtility.TrTextContent("Filtering Qualities");
         static readonly GUIContent k_DynamicResolutionSubTitle = EditorGUIUtility.TrTextContent("Dynamic resolution");
 
         static readonly GUIContent k_DefaultFrameSettingsContent = EditorGUIUtility.TrTextContent("Default Frame Settings For");
@@ -25,68 +24,69 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         static readonly GUIContent k_RenderPipelineResourcesContent = EditorGUIUtility.TrTextContent("Render Pipeline Resources", "Set of resources that need to be loaded when creating stand alone");
         static readonly GUIContent k_RenderPipelineEditorResourcesContent = EditorGUIUtility.TrTextContent("Render Pipeline Editor Resources", "Set of resources that need to be loaded for working in editor");
         static readonly GUIContent k_DiffusionProfileSettingsContent = EditorGUIUtility.TrTextContent("Diffusion Profile List");
-        static readonly GUIContent k_SRPBatcher = EditorGUIUtility.TrTextContent("SRP Batcher", "If enabled, the render pipeline uses the SRP batcher.");
-        static readonly GUIContent k_ShaderVariantLogLevel = EditorGUIUtility.TrTextContent("Shader Variant Log Level", "Controls the level logging in of shader variants information is outputted when a build is performed. Information will appear in the Unity console when the build finishes.");
+        static readonly GUIContent k_SRPBatcher = EditorGUIUtility.TrTextContent("SRP Batcher", "When enabled, the render pipeline uses the SRP batcher.");
+        static readonly GUIContent k_ShaderVariantLogLevel = EditorGUIUtility.TrTextContent("Shader Variant Log Level", "Controls the level logging in of shader variants information is outputted when a build is performed. Information appears in the Unity Console when the build finishes.");
 
-        static readonly GUIContent k_SupportShadowMaskContent = EditorGUIUtility.TrTextContent("Shadow Mask", "Enable memory (Extra Gbuffer in deferred) and shader variant for shadow mask.");
-        static readonly GUIContent k_SupportSSRContent = EditorGUIUtility.TrTextContent("Screen Space Reflection", "Enable memory use by SSR effect.");
-        static readonly GUIContent k_SupportSSAOContent = EditorGUIUtility.TrTextContent("SSAO", "Enable memory use by SSAO effect.");
-        static readonly GUIContent k_SupportedSSSContent = EditorGUIUtility.TrTextContent("Subsurface Scattering");
-        static readonly GUIContent k_SSSSampleCountContent = EditorGUIUtility.TrTextContent("High quality", "This allows for better SSS quality. Warning: high performance cost, do not enable on consoles.");
-        static readonly GUIContent k_SupportVolumetricContent = EditorGUIUtility.TrTextContent("Volumetrics", "Enable memory and shader variant for volumetric.");
-        static readonly GUIContent k_VolumetricResolutionContent = EditorGUIUtility.TrTextContent("High quality", "Increase the resolution of volumetric lighting buffers. Warning: high performance cost, do not enable on consoles.");
-        static readonly GUIContent k_SupportLightLayerContent = EditorGUIUtility.TrTextContent("LightLayers", "Enable light layers. In deferred this imply an extra render target in memory and extra cost.");
-        static readonly GUIContent k_SupportLitShaderModeContent = EditorGUIUtility.TrTextContent("Supported Lit Shader Mode", "Remove all the memory and shader variant of GBuffer of non used mode. The renderer cannot be switch to non selected path anymore.");
-        static readonly GUIContent k_MSAASampleCountContent = EditorGUIUtility.TrTextContent("MSAA Quality", "Allow to select the level of MSAA.");
-        static readonly GUIContent k_SupportDecalContent = EditorGUIUtility.TrTextContent("Enable", "Enable memory and variant for decals buffer and cluster decals.");
-        static readonly GUIContent k_SupportMotionVectorContent = EditorGUIUtility.TrTextContent("Motion Vectors", "Motion vector are use for Motion Blur, TAA, temporal re-projection of various effect like SSR.");
-        static readonly GUIContent k_SupportRuntimeDebugDisplayContent = EditorGUIUtility.TrTextContent("Runtime debug display", "Remove all debug display shader variant only in the player. Allow faster build.");
-        static readonly GUIContent k_SupportDitheringCrossFadeContent = EditorGUIUtility.TrTextContent("Dithering cross fade", "Remove all dithering cross fade shader variant only in the player. Allow faster build.");
-        static readonly GUIContent k_SupportDistortion = EditorGUIUtility.TrTextContent("Distortion", "Remove all distortion shader variants only in the player. Allow faster build.");
-        static readonly GUIContent k_SupportTransparentBackface = EditorGUIUtility.TrTextContent("Transparent Backface", "Remove all Transparent backface shader variants only in the player. Allow faster build.");
-        static readonly GUIContent k_SupportTransparentDepthPrepass = EditorGUIUtility.TrTextContent("Transparent Depth Prepass", "Remove all Transparent Depth Prepass shader variants only in the player. Allow faster build.");
-        static readonly GUIContent k_SupportTransparentDepthPostpass = EditorGUIUtility.TrTextContent("Transparent Depth Postpass", "Remove all Transparent Depth Postpass shader variants only in the player. Allow faster build.");
-        static readonly GUIContent k_SupportRaytracing = EditorGUIUtility.TrTextContent("Support Realtime Raytracing");
+        static readonly GUIContent k_SupportShadowMaskContent = EditorGUIUtility.TrTextContent("Shadow Mask", "When enabled, HDRP allocates Shader variants and memory for processing shadow masks. This allows you to use shadow masks in your Unity Project.");
+        static readonly GUIContent k_SupportSSRContent = EditorGUIUtility.TrTextContent("Screen Space Reflection", "When enabled, HDRP allocates memory for processing screen space reflection (SSR). This allows you to use SSR in your Unity Project.");
+        static readonly GUIContent k_SupportSSAOContent = EditorGUIUtility.TrTextContent("Screan Space Ambiant Occlusion", "When enabled, HDRP allocates memory for processing screen space ambient occlusion (SSAO). This allows you to use SSAO in your Unity Project.");
+        static readonly GUIContent k_SupportedSSSContent = EditorGUIUtility.TrTextContent("Subsurface Scattering", "When enabled, HDRP allocates memory for processing subsurface scattering (SSS). This allows you to use SSS in your Unity Project.");
+        static readonly GUIContent k_SSSSampleCountContent = EditorGUIUtility.TrTextContent("High quality ", "When enabled, HDRP processes higher quality subsurface scattering effects. Warning: There is a high performance cost, do not enable on consoles.");
+        static readonly GUIContent k_SupportVolumetricContent = EditorGUIUtility.TrTextContent("Volumetrics", "When enabled, HDRP allocates Shader variants and memory for volumetric effects. This allows you to use volumetric lighting and fog in your Unity Project.");
+        static readonly GUIContent k_VolumetricResolutionContent = EditorGUIUtility.TrTextContent("High quality ", "When enabled, HDRP increases the resolution of volumetric lighting buffers. Warning: There is a high performance cost, do not enable on consoles.");
+        static readonly GUIContent k_SupportLightLayerContent = EditorGUIUtility.TrTextContent("LightLayers", "When enabled, HDRP allocates memory for processing Light Layers. This allows you to use Light Layers in your Unity Project. For deferred rendering, this allocation includes an extra render target in memory and extra cost.");
+        static readonly GUIContent k_SupportLitShaderModeContent = EditorGUIUtility.TrTextContent("Lit Shader Mode", "Specifies the rendering modes HDRP supports for Lit Shaders. HDRP removes all allocated memory and Shader variants for modes you do not specify.");
+        static readonly GUIContent k_MSAASampleCountContent = EditorGUIUtility.TrTextContent("Multisample Anti-Aliasing Quality", "Specifies the maximum quality HDRP supports for MSAA. Set Lit Shader Mode to Forward Only or Both to use this feature.");
+        static readonly GUIContent k_SupportDecalContent = EditorGUIUtility.TrTextContent("Enable", "When enabled, HDRP allocates Shader variants and memory to the decals buffer and cluster decal. This allows you to use decals in your Unity Project.");
+        static readonly GUIContent k_SupportMotionVectorContent = EditorGUIUtility.TrTextContent("Motion Vectors", "When enabled, HDRP allocates memory for processing motion vectors which it uses for Motion Blur, TAA, and temporal re-projection of various effect like SSR.");
+        static readonly GUIContent k_SupportRuntimeDebugDisplayContent = EditorGUIUtility.TrTextContent("Runtime debug display", "When disabled, HDRP removes all debug display Shader variants when you build for the Unity Player. This decreases build time.");
+        static readonly GUIContent k_SupportDitheringCrossFadeContent = EditorGUIUtility.TrTextContent("Dithering cross fade", "When disabled, HDRP removes all dithering cross fade Shader variants when you build for the Unity Player. This decreases build time.");
+        static readonly GUIContent k_SupportDistortion = EditorGUIUtility.TrTextContent("Distortion", "When disabled, HDRP removes all distortion Shader variants when you build for the Unity Player. This decreases build time.");
+        static readonly GUIContent k_SupportTransparentBackface = EditorGUIUtility.TrTextContent("Transparent Backface", "When disabled, HDRP removes all transparent backface Shader variants when you build for the Unity Player. This decreases build time.");
+        static readonly GUIContent k_SupportTransparentDepthPrepass = EditorGUIUtility.TrTextContent("Transparent Depth Prepass", "When disabled, HDRP removes all transparent depth prepass Shader variants when you build for the Unity Player. This decreases build time.");
+        static readonly GUIContent k_SupportTransparentDepthPostpass = EditorGUIUtility.TrTextContent("Transparent Depth Postpass", "When disabled, HDRP removes all transparent depth postpass Shader variants when you build for the Unity Player. This decreases build time.");
+        static readonly GUIContent k_SupportRaytracing = EditorGUIUtility.TrTextContent("Realtime Raytracing");
         static readonly GUIContent k_EditorRaytracingFilterLayerMask = EditorGUIUtility.TrTextContent("Raytracing Filter Layer Mask for SceneView and Preview");
 
         const string k_CacheErrorFormat = "This configuration will lead to more than 2 GB reserved for this cache at runtime! ({0} requested) Only {1} element will be reserved instead.";
         const string k_CacheInfoFormat = "Reserving {0} in memory at runtime.";
 
-        static readonly GUIContent k_CoockieSizeContent = EditorGUIUtility.TrTextContent("Cookie Size");
-        static readonly GUIContent k_CookieTextureArraySizeContent = EditorGUIUtility.TrTextContent("Texture Array Size");
-        static readonly GUIContent k_PointCoockieSizeContent = EditorGUIUtility.TrTextContent("Point Cookie Size");
-        static readonly GUIContent k_PointCookieTextureArraySizeContent = EditorGUIUtility.TrTextContent("Cubemap Array Size");
+        static readonly GUIContent k_CoockieSizeContent = EditorGUIUtility.TrTextContent("Cookie Size", "Specifies the maximum size for the individual 2D cookies that HDRP uses for Directional and Spot Lights.");
+        static readonly GUIContent k_CookieTextureArraySizeContent = EditorGUIUtility.TrTextContent("Texture Array Size", "Sets the maximum Texture Array size for the 2D cookies HDRP uses for Directional and Spot Lights. Higher values allow HDRP to use more cookies concurrently on screen.");
+        static readonly GUIContent k_PointCoockieSizeContent = EditorGUIUtility.TrTextContent("Point Cookie Size", "Specifies the maximum size for the Cube cookes HDRP uses for Point Lights.");
+        static readonly GUIContent k_PointCookieTextureArraySizeContent = EditorGUIUtility.TrTextContent("Cubemap Array Size", "Sets the maximum Texture Array size for the Cube cookies HDRP uses for Directional and Spot Lights. Higher values allow HDRP to use more cookies concurrently on screen.");
 
 
-        static readonly GUIContent k_CompressProbeCacheContent = EditorGUIUtility.TrTextContent("Compress Reflection Probe Cache");
-        static readonly GUIContent k_CubemapSizeContent = EditorGUIUtility.TrTextContent("Reflection Cubemap Size");
-        static readonly GUIContent k_ProbeCacheSizeContent = EditorGUIUtility.TrTextContent("Probe Cache Size");
+        static readonly GUIContent k_CompressProbeCacheContent = EditorGUIUtility.TrTextContent("Compress Reflection Probe Cache", "When enabled, HDRP compresses the Reflection Probe cache to save disk space.");
+        static readonly GUIContent k_CubemapSizeContent = EditorGUIUtility.TrTextContent("Reflection Cubemap Size", "Specifies the maximum resolution of the individual Reflection Probe cube maps.");
+        static readonly GUIContent k_ProbeCacheSizeContent = EditorGUIUtility.TrTextContent("Probe Cache Size", "Sets the maximum size of the Probe Cache.");
 
-        static readonly GUIContent k_CompressPlanarProbeCacheContent = EditorGUIUtility.TrTextContent("Compress Planar Reflection Probe Cache");
-        static readonly GUIContent k_PlanarTextureSizeContent = EditorGUIUtility.TrTextContent("Planar Reflection Texture Size");
-        static readonly GUIContent k_PlanarProbeCacheSizeContent = EditorGUIUtility.TrTextContent("Planar Probe Cache Size");
+        static readonly GUIContent k_CompressPlanarProbeCacheContent = EditorGUIUtility.TrTextContent("Compress Planar Reflection Probe Cache", "When enabled, HDRP compresses the Planar Reflection Probe cache to save disk space.");
+        static readonly GUIContent k_PlanarTextureSizeContent = EditorGUIUtility.TrTextContent("Planar Reflection Texture Size", "Specifies the maximum resolution of Planar Reflection Textures.");
+        static readonly GUIContent k_PlanarProbeCacheSizeContent = EditorGUIUtility.TrTextContent("Planar Probe Cache Size", "Sets the maximum size of the Planar Probe Cache.");
 
-        static readonly GUIContent k_SupportFabricBSDFConvolutionContent = EditorGUIUtility.TrTextContent("Fabric BSDF Convolution");
+        static readonly GUIContent k_SupportFabricBSDFConvolutionContent = EditorGUIUtility.TrTextContent("Fabric BSDF Convolution", "When enabled, HDRP calculates a separate version of each Reflection Probe for the Fabric Shader, creating more accurate lighting effects. See the documentation for more information and limitations of this feature.");
 
-        static readonly GUIContent k_SkyReflectionSizeContent = EditorGUIUtility.TrTextContent("Reflection Size");
-        static readonly GUIContent k_SkyLightingOverrideMaskContent = EditorGUIUtility.TrTextContent("Lighting Override Mask", "This layer mask will define in which layers the sky system will look for sky settings volumes for lighting override");
+        static readonly GUIContent k_SkyReflectionSizeContent = EditorGUIUtility.TrTextContent("Reflection Size", "Specifies the maximum resolution of the cube map HDRP uses to represent the sky.");
+        static readonly GUIContent k_SkyLightingOverrideMaskContent = EditorGUIUtility.TrTextContent("Lighting Override Mask", "Specifies the layer mask HDRP uses to override sky lighting.");
         const string k_SkyLightingHelpBoxContent = "Be careful, Sky Lighting Override Mask is set to Everything. This is most likely a mistake as it serves no purpose.";
 
-        static readonly GUIContent k_MaxDirectionalContent = EditorGUIUtility.TrTextContent("Max Directional Lights On Screen");
-        static readonly GUIContent k_MaxPonctualContent = EditorGUIUtility.TrTextContent("Max Punctual Lights On Screen");
-        static readonly GUIContent k_MaxAreaContent = EditorGUIUtility.TrTextContent("Max Area Lights On Screen");
-        static readonly GUIContent k_MaxEnvContent = EditorGUIUtility.TrTextContent("Max Env Lights On Screen");
-        static readonly GUIContent k_MaxDecalContent = EditorGUIUtility.TrTextContent("Max Decals On Screen");
+        static readonly GUIContent k_MaxDirectionalContent = EditorGUIUtility.TrTextContent("Max Directional Lights On Screen", "Sets the maximum number of Directional Lights HDRP can handle on screen at once.");
+        static readonly GUIContent k_MaxPonctualContent = EditorGUIUtility.TrTextContent("Max Punctual Lights On Screen", "Sets the maximum number of Point and Spot Lights HDRP can handle on screen at once.");
+        static readonly GUIContent k_MaxAreaContent = EditorGUIUtility.TrTextContent("Max Area Lights On Screen", "Sets the maximum number of area Lights HDRP can handle on screen at once.");
+        static readonly GUIContent k_MaxEnvContent = EditorGUIUtility.TrTextContent("Max Env Lights On Screen", "Sets the maximum number of environment Lights HDRP can handle on screen at once.");
+        static readonly GUIContent k_MaxDecalContent = EditorGUIUtility.TrTextContent("Max Decals On Screen", "Sets the maximum number of Decals HDRP can handle on screen at once.");
 
-        static readonly GUIContent k_ResolutionContent = EditorGUIUtility.TrTextContent("Resolution");
-        static readonly GUIContent k_Map16bContent = EditorGUIUtility.TrTextContent("16-bit");
-        static readonly GUIContent k_DynamicRescaleContent = EditorGUIUtility.TrTextContent("Dynamic Rescale", "Scale the shadow map size using the screen size of the light to leave more space for other shadows in the atlas");
-        static readonly GUIContent k_MaxRequestContent = EditorGUIUtility.TrTextContent("Max Shadow on Screen", "Max shadow on screen (S) per frame, 1 point light = 6 S, 1 spot light = 1 S and the directional is 4 S");
+        static readonly GUIContent k_ResolutionContent = EditorGUIUtility.TrTextContent("Resolution", "Specifies the resolution of the shadow Atlas.");
+        static readonly GUIContent k_Map16bContent = EditorGUIUtility.TrTextContent("16-bit", "When enabled, this forces HDRP to use 16-bit shadow maps.");
+        static readonly GUIContent k_DynamicRescaleContent = EditorGUIUtility.TrTextContent("Dynamic Rescale", "When enabled, scales the shadow map size using the screen size of the Light to leave more space for other shadows in the atlas.");
+        static readonly GUIContent k_MaxRequestContent = EditorGUIUtility.TrTextContent("Max Shadow on Screen", "Sets the maximum number of shadows HDRP can handle on screen at once. See the documentation for details on how many shadows each light type casts.");
 
-        static readonly GUIContent k_DrawDistanceContent = EditorGUIUtility.TrTextContent("Draw Distance");
-        static readonly GUIContent k_AtlasWidthContent = EditorGUIUtility.TrTextContent("Atlas Width");
-        static readonly GUIContent k_AtlasHeightContent = EditorGUIUtility.TrTextContent("Atlas Height");
-        static readonly GUIContent k_MetalAndAOContent = EditorGUIUtility.TrTextContent("Metal and AO properties");
+        static readonly GUIContent k_DrawDistanceContent = EditorGUIUtility.TrTextContent("Draw Distance", "Sets the maximum distance from the Camera at which HDRP draws Decals.");
+        static readonly GUIContent k_AtlasWidthContent = EditorGUIUtility.TrTextContent("Atlas Width", "Sets the width of the Decal Atlas.");
+        static readonly GUIContent k_AtlasHeightContent = EditorGUIUtility.TrTextContent("Atlas Height", "Sets the height of the Decal Atlas.");
+        static readonly GUIContent k_MetalAndAOContent = EditorGUIUtility.TrTextContent("Metal and AO properties", "When enabled, Decals affect metal and ambient occlusion properties.");
+        static readonly GUIContent k_FilteringQuality = EditorGUIUtility.TrTextContent("Filtering Qualities", "Specifies the quality of shadows. See the documentation for details on the algorithm HDRP uses for each preset.");
 
         static readonly GUIContent k_Enabled = EditorGUIUtility.TrTextContent("Enabled");
         static readonly GUIContent k_MaxPercentage = EditorGUIUtility.TrTextContent("Max Screen Percentage");

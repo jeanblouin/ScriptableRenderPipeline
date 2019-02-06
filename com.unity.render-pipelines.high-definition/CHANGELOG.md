@@ -37,7 +37,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added Material validator in Render Pipeline Debug
 - Added code to future support of DXR (not enabled)
 - Added support of multiviewport
-- Added stereo instancing macros to a few shaders
 - Added HDRenderPipeline.RequestSkyEnvironmentUpdate function to force an update from script when sky is set to OnDemand
 - Added a Lighting and BackLighting slots in Lit, StackLit, Fabric and Hair master nodes
 - Added support for overriding terrain detail rendering shaders, via the render pipeline editor resources asset
@@ -49,6 +48,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added stereo instancing macros to MSAA shaders
 - Added multi edition support for HDRenderPipelineAsset
 - Added support for Quarter Res Raytraced Reflections (not enabled)
+- Added fade factor for decal projectors.
+- Added stereo instancing macros to most shaders used in VR
 
 ### Fixed
 - Fixed logic to disable FPTL with stereo rendering
@@ -110,6 +111,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed multi edition issue in FrameSettings
 - Fixed issue with Stacklit shader with Haze effect
 - Fixed an issue with the max sample count for the TAA
+- Fixed post-process guard band for XR
+- Fixed exposure of emissive of Unlit
+- Fixed depth only and motion vector pass for Unlit not working correctly with MSAA
 
 ### Changed
 - ColorPyramid compute shader passes is swapped to pixel shader passes on platforms where the later is faster (Nintendo Switch).
@@ -137,6 +141,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Rename SampleCameraDepth() functions to LoadCameraDepth() and SampleCameraDepth(), same for SampleCameraColor() functions
 - Updated HDRenderPipelineAsset inspector
 - Improved Motion Blur quality. 
+- Update stereo frame settings values for single-pass instancing and double-wide
+- Rearrange FetchDepth functions to prepare for stereo-instancing
+- Remove unused _ComputeEyeIndex
 
 ## [5.2.0-preview] - 2018-11-27
 

@@ -40,7 +40,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             ShadowResolution8192 = 8192,
             ShadowResolution16384 = 16384
         }
-
+        
         internal enum SelectedFrameSettings
         {
             Camera,
@@ -257,7 +257,7 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
             
             EditorGUILayout.DelayedIntField(serialized.renderPipelineSettings.lightLoopSettings.maxShadowRequests, k_MaxRequestContent);
             
-            EditorGUILayout.PropertyField(serialized.renderPipelineSettings.lightLoopSettings.shadowQuality, k_ShadowFilteringQualitySubTitle);
+            EditorGUILayout.PropertyField(serialized.renderPipelineSettings.lightLoopSettings.shadowQuality, k_FilteringQuality);
         }
 
         static void Drawer_SectionDecalSettings(SerializedHDRenderPipelineAsset serialized, Editor owner)
