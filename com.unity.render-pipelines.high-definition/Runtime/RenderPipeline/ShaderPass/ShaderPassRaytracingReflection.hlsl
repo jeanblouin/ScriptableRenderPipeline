@@ -44,6 +44,8 @@ void ClosestHitMain(inout RayIntersection rayIntersection : SV_RayPayload, Attri
     // Color display for the moment
     rayIntersection.color = diffuseLighting + specularLighting;
 #else
+    // Given that we will be multiplying the final color by the current exposure multiplier outside of this function, we need to make sure that
+    // the unlit color is not impacted by that. Thus, we multiply it by the inverse of the current exposure multiplier.
     rayIntersection.color = bsdfData.color * GetInverseCurrentExposureMultiplier() + builtinData.emissiveColor;
 #endif
 }
