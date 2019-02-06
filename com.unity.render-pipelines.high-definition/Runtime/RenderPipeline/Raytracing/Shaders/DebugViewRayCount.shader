@@ -2,30 +2,28 @@ Shader "Hidden/HDRP/DebugViewRayCount"
 {
     Properties
     {
-        _CameraColorTexture("_CameraColorTexture", 2D) = "white" {}
         _FontColor("_FontColor", Color) = (1,1,1,1)
     }
-        SubShader
+    SubShader
+    {
+        Tags{ "RenderPipeline" = "HDRenderPipeline" }
+        Pass
         {
-            Tags{ "RenderPipeline" = "HDRenderPipeline" }
-            Pass
-            {
-                ZWrite Off
-                Cull Off
-                ZTest Always
-                Blend SrcAlpha OneMinusSrcAlpha
+            ZWrite Off
+            Cull Off
+            ZTest Always
+            Blend SrcAlpha OneMinusSrcAlpha
 
-                HLSLPROGRAM
-                #pragma target 4.5
-                #pragma only_renderers d3d11 ps4 xboxone vulkan metal switch
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma only_renderers d3d11 ps4 xboxone vulkan metal switch
 
-                #pragma vertex Vert
-                #pragma fragment Frag
+            #pragma vertex Vert
+            #pragma fragment Frag
 
             //-------------------------------------------------------------------------------------
             // Include
             //-------------------------------------------------------------------------------------
-
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
@@ -35,7 +33,6 @@ Shader "Hidden/HDRP/DebugViewRayCount"
             //-------------------------------------------------------------------------------------
 
             StructuredBuffer<uint> _TotalRayCountBuffer;
-            TEXTURE2D(_CameraColorTexture);
             float4 _FontColor;
 
             struct Attributes
@@ -57,11 +54,28 @@ Shader "Hidden/HDRP/DebugViewRayCount"
                 return output;
             }
 
-            float4 AlphaBlend(float4 c0, float4 c1) // c1 over c0
+            // Helper to write mega rays per frame
+            #define MAX_STRING_SIZE 16
+            #define AO_STRING_SIZE 4
+            static const uint AOName[MAX_STRING_SIZE] = {'A','O',':',' ','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0','\0'};
+            #define REFLECTION_STRING_SIZE 12
+            static const uint ReflectionName[MAX_STRING_SIZE] = {'R','e','f','l','e','c','t','i','o','n',':',' ','\0','\0','\0','\0'};
+            #define SHADOW_STRING_SIZE 13
+            static const uint ShadowName[MAX_STRING_SIZE] = {'A','r','e','a',' ','S','h','a','d','o','w',':',' ','\0','\0','\0'};
+            #define TOTAL_STRING_SIZE 7
+            static const uint TotalName[MAX_STRING_SIZE] = {'T','o','t','a','l',':',' ','\0','\0','\0','\0','\0','\0','\0','\0','\0'};
+            #define MRPF_STRING_SIZE 12
+            static const uint MGPFName[MAX_STRING_SIZE] = {' ', 'm','r','a','y','s','/','f','r','a','m','e','\0','\0','\0','\0'};
+
+            // Helper function to write strings
+            void WriteMegaraysPerFrame(uint targetWord[MAX_STRING_SIZE], uint stringSize, float3 fontColor, uint2 unormCoord, inout uint2 displayUnormCoord, inout float3 result)
             {
-                return float4(lerp(c0.rgb, c1.rgb, c1.a), c0.a + c1.a - c0.a * c1.a);
+                for(int i = 0; i < stringSize; ++i)
+                {
+                    DrawCharacter(targetWord[i], fontColor, unormCoord, displayUnormCoord, result);
+                }
             }
-            
+
             float4 Frag(Varyings input) : SV_Target
             {
                 // Display message offset:
@@ -69,101 +83,41 @@ Shader "Hidden/HDRP/DebugViewRayCount"
                 int displayTextOffsetY = -DEBUG_FONT_TEXT_HEIGHT;
 
                 // Get MRays/frame
-                float aoMRays = (float)_TotalRayCountBuffer[0] / (1000.0f * 1000.0f);
-                float reflectionMRays = (float)_TotalRayCountBuffer[1] / (1000.0f * 1000.0f);
-                float areaShadowMRays = (float)_TotalRayCountBuffer[2] / (1000.0f * 1000.0f);
+                float aoMRays = (float)_TotalRayCountBuffer[0] / (1e6f);
+                float reflectionMRays = (float)_TotalRayCountBuffer[1] / (1e6f);
+                float areaShadowMRays = (float)_TotalRayCountBuffer[2] / (1e6f);
 				float totalMRays = aoMRays + reflectionMRays + areaShadowMRays;
 
                 uint2 displayUnormCoord = uint2(displayTextOffsetX, abs(displayTextOffsetY) * 4);
                 uint2 unormCoord = input.positionCS.xy;
                 float3 fontColor = _FontColor.rgb;
-                float4 result = LOAD_TEXTURE2D(_CameraColorTexture, input.texcoord.xy * _ScreenSize.xy); //float4(0.0, 0.0, 0.0, 1.0);
+                float4 result = float4(0.0, 0.0, 0.0, 1.0);
 
-                DrawCharacter('A', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('O', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter(':', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                // Ambient Occlusion Data
+                WriteMegaraysPerFrame(AOName, AO_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
                 DrawFloat(aoMRays, fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('M', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('R', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('y', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('s', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('/', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('f', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('r', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('m', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('e', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                WriteMegaraysPerFrame(MGPFName, MRPF_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
 
+                // Reflection Data
                 displayUnormCoord = uint2(displayTextOffsetX, abs(displayTextOffsetY) * 3);
-                DrawCharacter('R', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('e', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('f', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('l', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('e', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('c', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('t', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('i', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('o', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('n', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter(':', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                WriteMegaraysPerFrame(ReflectionName, REFLECTION_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
                 DrawFloat(reflectionMRays, fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('M', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('R', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('y', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('s', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('/', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('f', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('r', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('m', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('e', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                WriteMegaraysPerFrame(MGPFName, MRPF_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
 
+                // Shadow Data
                 displayUnormCoord = uint2(displayTextOffsetX, abs(displayTextOffsetY) * 2);
-                DrawCharacter('A', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('r', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('e', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('S', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('h', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('d', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('o', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('w', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter(':', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                WriteMegaraysPerFrame(ShadowName, SHADOW_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
                 DrawFloat(areaShadowMRays, fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('M', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('R', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('y', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('s', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('/', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('f', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('r', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('m', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('e', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                WriteMegaraysPerFrame(MGPFName, MRPF_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
 
+                // Total Data
                 displayUnormCoord = uint2(displayTextOffsetX, abs(displayTextOffsetY));
-                DrawCharacter('T', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('o', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('t', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('l', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter(':', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                WriteMegaraysPerFrame(TotalName, TOTAL_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
                 DrawFloat(totalMRays, fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('M', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('R', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('y', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('s', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('/', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('f', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('r', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('a', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('m', fontColor, unormCoord, displayUnormCoord, result.rgb);
-                DrawCharacter('e', fontColor, unormCoord, displayUnormCoord, result.rgb);
+                WriteMegaraysPerFrame(MGPFName, MRPF_STRING_SIZE, fontColor, unormCoord, displayUnormCoord, result.rgb);
+
+                // If the pixel is black, the value is not required 
+                result.w = result.x > 0.0f ? 1.0f : 0.0f;
                 return result;
             }
 

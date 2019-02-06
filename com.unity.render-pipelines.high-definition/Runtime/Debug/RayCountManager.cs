@@ -75,7 +75,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             ClearRayCount(cmd, camera);
         }
 
-        public void RenderRayCount(CommandBuffer cmd, HDCamera camera, RTHandleSystem.RTHandle colorTex, Color fontColor)
+        public void RenderRayCount(CommandBuffer cmd, HDCamera camera, Color fontColor)
         {
             if (m_RayCountEnabled)
             {
@@ -96,7 +96,6 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                     cmd.DispatchCompute(m_RayCountCompute, countKernelIdx, dispatchWidth, dispatchHeight, 1);
 
                     // Draw overlay
-                    m_DrawRayCountProperties.SetTexture(HDShaderIDs._CameraColorTexture, colorTex);
                     m_DrawRayCountProperties.SetTexture(HDShaderIDs._DebugFont, s_DebugFontTex);
                     m_DrawRayCountProperties.SetColor(_FontColor, fontColor);
                     m_DrawRayCount.SetBuffer(_TotalRayCountBuffer, s_TotalRayCountBuffer);
