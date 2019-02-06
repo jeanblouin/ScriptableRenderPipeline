@@ -12,8 +12,12 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         SkyManager m_SkyManager = null;
         HDRaytracingManager m_RaytracingManager = null;
         SharedRTManager m_SharedRTManager = null;
+        GBufferManager m_GBufferManager = null; 
 
-        static readonly int _VertNormalBuffer = Shader.PropertyToID("_VertNormalBuffer");
+        static readonly int _BumpNormalTexture = Shader.PropertyToID("_BumpNormalTexture");
+        static readonly int _SmoothNormalTexture = Shader.PropertyToID("_SmoothNormalTexture");
+        static readonly int _PackedSmoothNormals = Shader.PropertyToID("_PackedSmoothNormals");
+        static readonly int _RoughnessTexture = Shader.PropertyToID("_RoughnessTexture");
 
         // Intermediate buffer that stores the reflection pre-denoising
         RTHandleSystem.RTHandle m_LightingTexture = null;
@@ -23,8 +27,10 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         RTHandleSystem.RTHandle m_MaxBoundBuffer = null;
 
         // Additional textures for NVFilter
-        RTHandleSystem.RTHandle m_HitDistanceBuffer = null;
-        RTHandleSystem.RTHandle m_VertNormalBuffer = null;
+        RTHandleSystem.RTHandle m_HitDistanceTexture = null;
+        RTHandleSystem.RTHandle m_BumpNormalTexture = null;
+        RTHandleSystem.RTHandle m_SmoothNormalTexture = null;
+        RTHandleSystem.RTHandle m_RoughnessTexture = null;
 
         // Light cluster structure
         public HDRaytracingLightCluster m_LightCluster = null;
@@ -40,7 +46,7 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
         {
         }
 
-        public void Init(HDRenderPipelineAsset asset, SkyManager skyManager, HDRaytracingManager raytracingManager, SharedRTManager sharedRTManager)
+        public void Init(HDRenderPipelineAsset asset, SkyManager skyManager, HDRaytracingManager raytracingManager, SharedRTManager sharedRTManager, GBufferManager gBufferManager)
         {
             // Keep track of the pipeline asset
             m_PipelineAsset = asset;
@@ -54,10 +60,17 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             // Keep track of the shared rt manager
             m_SharedRTManager = sharedRTManager;
 
-            // Buffer that holds the average distance of the rays
-            // TODO share hit distance and normal buffers with AO?
-            m_HitDistanceBuffer = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16_SFloat, enableRandomWrite: true, useMipMap: false, name: "HitDistanceBuffer");
-            m_VertNormalBuffer = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16G16B16A16_SFloat, enableRandomWrite: true, useMipMap: false, name: "VertexNormalBuffer");
+            // Keep track of the GBuffer manager
+            m_GBufferManager = gBufferManager;
+
+            // Additional textures needed for Nvidia filtering
+            // TODO standardize GW filter inputs and allocate shared textures in RaytracingManager
+            // TODO modify filter library to accommodate existing textures instead of allocating new ones
+            m_HitDistanceTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16_SFloat, enableRandomWrite: true, useMipMap: false, name: "HitDistanceTexture");
+            // Normal buffer stores octal bumpmapped normal + octal perceptual roughness. Filter expects unpacked geometric normals and octal roughness = perceptualRoughness^2. 
+            m_BumpNormalTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16G16B16A16_SFloat, enableRandomWrite: true, useMipMap: false, name: "BumpNormalTexture");
+            m_SmoothNormalTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16G16B16A16_SFloat, enableRandomWrite: true, useMipMap: false, name: "SmoothNormalsTexture");
+            m_RoughnessTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R8G8B8A8_UNorm, enableRandomWrite: true, useMipMap: false, name: "RoughnessTexture");
 
             m_LightingTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16G16B16A16_SFloat, enableRandomWrite: true, useMipMap: false, name: "LightingBuffer");
             m_HitPdfTexture = RTHandles.Alloc(Vector2.one, filterMode: FilterMode.Point, colorFormat: GraphicsFormat.R16G16B16A16_SFloat, enableRandomWrite: true, useMipMap: false, name: "HitPdfBuffer");
@@ -82,8 +95,11 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             m_LightCluster.ReleaseResources();
             m_LightCluster = null;
 
-            RTHandles.Release(m_HitDistanceBuffer);
-            RTHandles.Release(m_VertNormalBuffer);
+            RTHandles.Release(m_HitDistanceTexture);
+            RTHandles.Release(m_BumpNormalTexture);
+            RTHandles.Release(m_SmoothNormalTexture);
+            RTHandles.Release(m_RoughnessTexture);
+
             RTHandles.Release(m_MinBoundBuffer);
             RTHandles.Release(m_MaxBoundBuffer);
             RTHandles.Release(m_VarianceBuffer);
@@ -162,10 +178,13 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
             cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, HDShaderIDs._SsrHitPointTexture, m_HitPdfTexture);
             cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, HDShaderIDs._DepthTexture, m_SharedRTManager.GetDepthStencilBuffer());
             cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, HDShaderIDs._NormalBufferTexture, m_SharedRTManager.GetNormalBuffer());
+            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, _PackedSmoothNormals, m_PipelineAsset.renderPipelineSettings.supportLightLayers ? m_GBufferManager.GetLightLayersBuffer(0) : m_SharedRTManager.GetNormalBuffer());
 
             // Data required for nvidia filter
-            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, HDShaderIDs._RaytracingHitDistanceTexture, m_HitDistanceBuffer);
-            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, _VertNormalBuffer, m_VertNormalBuffer);
+            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, HDShaderIDs._RaytracingHitDistanceTexture, m_HitDistanceTexture);
+            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, _BumpNormalTexture, m_BumpNormalTexture);
+            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, _SmoothNormalTexture, m_SmoothNormalTexture);
+            cmd.SetRaytracingTextureParam(reflectionShader, targetRayGen, _RoughnessTexture, m_RoughnessTexture);
 
             // Compute the pixel spread value
             float pixelSpreadAngle = Mathf.Atan(2.0f * Mathf.Tan(hdCamera.camera.fieldOfView * Mathf.PI / 360.0f) / Mathf.Min(hdCamera.actualWidth, hdCamera.actualHeight));
@@ -219,7 +238,9 @@ namespace UnityEngine.Experimental.Rendering.HDPipeline
                 {
                     case HDRaytracingEnvironment.ReflectionsQuality.Nvidia:
                     {
-                        cmd.NVFilterReflectionTexture(m_LightingTexture, m_HitDistanceBuffer, m_SharedRTManager.GetDepthStencilBuffer(), m_VertNormalBuffer, m_SharedRTManager.GetNormalBuffer(), outputTexture,
+                        cmd.NVFilterReflectionTexture(m_LightingTexture /*raw reflections*/, m_HitDistanceTexture /*hitT*/, m_SharedRTManager.GetDepthStencilBuffer() /*reverseZ depth*/, 
+                                                    m_BumpNormalTexture /*Bumpmapped normals*/, m_PipelineAsset.renderPipelineSettings.supportLightLayers ? m_SmoothNormalTexture : m_BumpNormalTexture /*Smooth normals*/, m_RoughnessTexture /*Octal roughness (in alpha channel)*/,
+                                                    outputTexture /*filtered reflections*/,
                                                     hdCamera.viewMatrix, hdCamera.projMatrix, hdCamera.viewProjMatrix, hdCamera.viewProjMatrix.inverse,
                                                     rtEnvironement.lowerRoughnessTransitionPoint, rtEnvironement.upperRoughnessTransitionPoint,
                                                     rtEnvironement.minSamplingBias, rtEnvironement.maxSamplingBias,
