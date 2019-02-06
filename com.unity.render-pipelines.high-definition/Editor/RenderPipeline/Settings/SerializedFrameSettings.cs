@@ -11,13 +11,21 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
 
         public SerializedObject serializedObject => rootData.serializedObject;
         
-        public LitShaderMode litShaderMode
+        public LitShaderMode? litShaderMode
         {
-            get => IsEnabled(FrameSettingsField.LitShaderMode) ? LitShaderMode.Deferred : LitShaderMode.Forward;
+            get
+            {
+                bool? val = IsEnabled(FrameSettingsField.LitShaderMode);
+                return val == null
+                    ? (LitShaderMode?)null
+                    : val.Value == true
+                        ? LitShaderMode.Deferred
+                        : LitShaderMode.Forward;
+            }
             set => SetEnabled(FrameSettingsField.LitShaderMode, value == LitShaderMode.Deferred);
         }
 
-        public bool IsEnabled(FrameSettingsField field) => rootData.GetBitArrayAt((uint)field);
+        public bool? IsEnabled(FrameSettingsField field) => HaveMultipleValue(field) ? (bool?)null : rootData.GetBitArrayAt((uint)field);
         public void SetEnabled(FrameSettingsField field, bool value)
         {
             if(rootData.serializedObject.isEditingMultipleObjects)
@@ -31,8 +39,8 @@ namespace UnityEditor.Experimental.Rendering.HDPipeline
         }
         public bool HaveMultipleValue(FrameSettingsField field)
         {
-            bool value = IsEnabled(field);
             var objects = rootData.serializedObject.targetObjects;
+            bool value = GetData(objects[0]).IsEnabled(field);
             for (int index = 1; index < objects.Length; ++index)
                 if (value ^ (GetData(objects[index]).IsEnabled(field)))
                     return true;
