@@ -46,10 +46,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added support for "After Post-Process" render pass for unlit shader
 - Added support for textured rectangular area lights
 - Added stereo instancing macros to MSAA shaders
-- Added multi edition support for HDRenderPipelineAsset
 - Added support for Quarter Res Raytraced Reflections (not enabled)
 - Added fade factor for decal projectors.
 - Added stereo instancing macros to most shaders used in VR
+- Added multi edition support for HDRenderPipelineAsset
 
 ### Fixed
 - Fixed logic to disable FPTL with stereo rendering
@@ -108,12 +108,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a case of ambient lighting flickering because of previews
 - Fixed Decals when rendering multiple camera in a single frame
 - Fixed cascade shadow count in shader
-- Fixed multi edition issue in FrameSettings
 - Fixed issue with Stacklit shader with Haze effect
 - Fixed an issue with the max sample count for the TAA
 - Fixed post-process guard band for XR
 - Fixed exposure of emissive of Unlit
 - Fixed depth only and motion vector pass for Unlit not working correctly with MSAA
+- Fixed multi edition issue in FrameSettings
 
 ### Changed
 - ColorPyramid compute shader passes is swapped to pixel shader passes on platforms where the later is faster (Nintendo Switch).
@@ -139,11 +139,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Temporal Antialiasing optimization for Xbox One X
 - Parameter depthSlice on SetRenderTarget functions now defaults to -1 to bind the entire resource
 - Rename SampleCameraDepth() functions to LoadCameraDepth() and SampleCameraDepth(), same for SampleCameraColor() functions
-- Updated HDRenderPipelineAsset inspector
 - Improved Motion Blur quality. 
 - Update stereo frame settings values for single-pass instancing and double-wide
 - Rearrange FetchDepth functions to prepare for stereo-instancing
 - Remove unused _ComputeEyeIndex
+- Updated HDRenderPipelineAsset inspector
 
 ## [5.2.0-preview] - 2018-11-27
 
